@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
 Name:           SmeegeScrape
 Version:        0.6
