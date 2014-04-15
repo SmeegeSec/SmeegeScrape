@@ -20,8 +20,8 @@ Please see the attached LICENSE file for additional licensing information.
 """
 
 import argparse
-import docx
-import pptx
+import docx #https://pypi.python.org/pypi/python-docx
+import pptx #https://pypi.python.org/pypi/python-pptx
 import glob
 import mimetypes
 import nltk #http://pypi.python.org/pypi/nltk
