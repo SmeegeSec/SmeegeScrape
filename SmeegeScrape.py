@@ -56,6 +56,7 @@ optionGroup = parser.add_argument_group('paramters and options')
 optionGroup.add_argument('-o', action="store", dest="outputFile", help="Output filename. (Default: smeegescrape_out.txt)")
 optionGroup.add_argument('-i', action="store_true", dest="integers", help="Remove integers [0-9] from the final output.")
 optionGroup.add_argument('-s', action="store_true", dest="specials", help="Remove special characters (only alphanum allowed) from the final output.")
+optionGroup.add_argument('-n', action="store_true", dest="nonprintable", help="Remove all non-printable ASCII characters from the final output.")
 optionGroup.add_argument('-min', action="store", dest="minLength", type=int, help="Set the minimum number of characters for each word (Default: 3).")
 optionGroup.add_argument('-max', action="store", dest="maxLength", type=int, help="Set the maximum number of characters for each word (Default: 30).")
 
@@ -249,15 +250,16 @@ if __name__ == "__main__":
             minl = 3
             maxl = 30
 
-    if args.specials and args.integers:
-        charBlacklist = "0123456789~`!@#$%^&*()_\"--+=[]{}|/\:;'<,>.?/"
-    elif args.specials:
-        charBlacklist = "~`!@#$%^&*()_\"--+=[]{}|/\:;'<,>.?/"
-    elif args.integers:
-        charBlacklist = "0123456789"
-    else:
-        charBlacklist = ""
-        
+    charBlacklist = ""
+
+    if args.specials:
+        charBlacklist += "~`!@#$%^&*()_\"--+=[]{}|/\:;'<,>.?/"
+    if args.integers:
+        charBlacklist += string.digits
+    if args.nonprintable:
+        non_printable = filter(lambda x: x not in string.printable, map(chr, range(0, 256)))
+        charBlacklist += ''.join(non_printable)
+
     if args.localFile:
         localFile(args.localFile)
     if args.fileDirectory:
