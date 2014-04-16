@@ -154,6 +154,7 @@ def localFile(fileInput):
         elif file_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
             document = docx.opendocx(fileInput)
             sentances = docx.getdocumenttext(document)
+            sentances = map(lambda s: s.encode("ascii", "ignore"), sentances)
             if args.minLength or args.maxLength:
                 for sentance in sentances:
                     for word in set(sentance.split()):
