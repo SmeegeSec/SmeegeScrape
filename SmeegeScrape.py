@@ -29,6 +29,7 @@ import os
 import PyPDF2 #https://pypi.python.org/pypi/PyPDF2/1.19
 import re
 import string
+import fnmatch
 from argparse import RawTextHelpFormatter
 from collections import OrderedDict
 from urllib import quote
@@ -53,6 +54,7 @@ operationGroup.add_argument('-u',  action="store", dest="webUrl", help="Specify 
 operationGroup.add_argument('-l', action="store", dest="webList", help="Specify a text file with a list of URLs to scrape (separated by newline).")
 
 optionGroup = parser.add_argument_group('paramters and options')
+optionGroup.add_argument('-r', action="store_true", dest="fileDirectoryRecursive", help="Scan directories recursively (only applies when used with -d)")
 optionGroup.add_argument('-o', action="store", dest="outputFile", help="Output filename. (Default: smeegescrape_out.txt)")
 optionGroup.add_argument('-i', action="store_true", dest="integers", help="Remove integers [0-9] from the final output.")
 optionGroup.add_argument('-s', action="store_true", dest="specials", help="Remove special characters (only alphanum allowed) from the final output.")
@@ -207,15 +209,23 @@ def localFile(fileInput):
     else:
         print 'Error opening file: {0}'.format(fileInput)
 
-def fileDir(dirInput):
+def fileDir(dirInput, recursive):
     if os.path.isdir(dirInput):
-        "Scraping Files in Local Directory - {0}".format(dirInput)
+        print "Scraping Files in Local Directory {0}- {1}".format('(recursively) ' if recursive else '', dirInput)
         mimetypes.init()
-        fileTypes = ('*.pdf', '*.docx', '*.txt', '*.csv', '*.py', '*.cpp', '*.pl', '*.log', '*.rtf', '*.css', '*.dat', '*.html', '*.php', '*.pps', '*.ppt', '*.pptx', '*.sh', '*.xml', '*.xsl')
-        for fileType in fileTypes:
-            for globFile in glob.glob(os.path.join(dirInput, fileType)):
-                file_type, file_encoding = mimetypes.guess_type(globFile)
-                localFile(globFile)
+        fileTypes = ('*.conf', '*.cs', '*.js', '*.c', '*.cpp', '*.c++', '*.pdf', '*.docx', '*.txt', '*.csv', '*.py', '*.cpp', '*.pl', '*.log', '*.rtf', '*.css', '*.dat', '*.html', '*.php', '*.pps', '*.ppt', '*.pptx', '*.sh', '*.xml', '*.xsl')
+        if recursive:
+            for root, dirs, files in os.walk(dirInput):
+                for fileType in fileTypes:
+                    for file_name in fnmatch.filter(files, fileType):
+                        file_path = os.path.join(root, file_name)
+                        file_type, file_encoding = mimetypes.guess_type(file_path)
+                        localFile(file_path)
+        else:
+            for fileType in fileTypes:
+                for globFile in glob.glob(os.path.join(dirInput, fileType)):
+                    file_type, file_encoding = mimetypes.guess_type(globFile)
+                    localFile(globFile)
     else:
         print 'Error accessing directory: {0}'.format(dirInput)
 
@@ -263,7 +273,7 @@ if __name__ == "__main__":
     if args.localFile:
         localFile(args.localFile)
     if args.fileDirectory:
-        fileDir(args.fileDirectory)
+        fileDir(args.fileDirectory, args.fileDirectoryRecursive)
     if args.webUrl:
         webUrl(args.webUrl)
     if args.webList:
