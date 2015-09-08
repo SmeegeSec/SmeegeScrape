@@ -121,6 +121,7 @@ def webUrl(fullUrl):
         except Exception as e:
             print 'There was an error connecting to or parsing {0}'.format(fullUrl)
             print 'Error: %s' % e
+            print 'If you are not using NLTK version 2.0.4 please uninstall the current version and install 2.0.4 using \'sudo pip install -Iv nltk==2.0.4\''
     else:
         print 'INVALID URL - {0}. Format must be http(s)://www.smeegesec.com.'.format(fullUrl)
 
