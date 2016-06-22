@@ -20,13 +20,13 @@ Please see the attached LICENSE file for additional licensing information.
 """
 
 import argparse
-import docx #https://pypi.python.org/pypi/python-docx
-import pptx #https://pypi.python.org/pypi/python-pptx
+import docx #https://pypi.python.org/pypi/python-docx, pip install docx   (must use legacy docx module)
+import pptx #https://pypi.python.org/pypi/python-pptx, pip install python-pptx
 import glob
 import mimetypes
-import nltk #http://pypi.python.org/pypi/nltk
+import nltk #http://pypi.python.org/pypi/nltk, pip install -Iv nltk==2.0.4
 import os
-import PyPDF2 #https://pypi.python.org/pypi/PyPDF2/1.19
+import PyPDF2 #https://pypi.python.org/pypi/PyPDF2/1.19, pip install PyPDF2
 import re
 import string
 import fnmatch
@@ -85,10 +85,10 @@ def getPDFContent(path):
     if args.minLength or args.maxLength:
         for word in content:
             if not(len(word.translate(None,charBlacklist)) < minl or len(word) > maxl):
-                wordList.append(str(word).translate(None,charBlacklist))
+                wordList.append(str(word.encode('ascii','ignore')).translate(None,charBlacklist))
     else:
         for word in content:
-            wordList.append(str(word).translate(None,charBlacklist))
+            wordList.append(str(word.encode('ascii','ignore')).translate(None,charBlacklist))
 
 def webUrl(fullUrl):
     #urllib2 works best with a specific url format
@@ -163,11 +163,11 @@ def localFile(fileInput):
                 for sentance in sentances:
                     for word in set(sentance.split()):
                         if not(len(str(word).translate(None,charBlacklist)) < minl or len(str(word)) > maxl):
-                            wordList.append(str(word).translate(None,charBlacklist))
+                            wordList.append(str(word.encode('ascii','ignore')).translate(None,charBlacklist))
             else:
                 for sentance in sentances:
                     for word in set(sentance.split()):
-                        wordList.append(str(word).translate(None,charBlacklist))
+                        wordList.append(str(word.encode('ascii','ignore')).translate(None,charBlacklist))
         elif file_type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation' or file_type == 'application/x-mspowerpoint.12':
             try:
                 prs = pptx.Presentation(fileInput)
@@ -185,11 +185,11 @@ def localFile(fileInput):
                     for sentance in text_runs:
                         for word in set(sentance.split()):
                             if not(len(str((word.translate(None,charBlacklist)))) < minl or len(str(word)) > maxl):
-                                wordList.append(str(word).translate(None,charBlacklist))
+                                wordList.append(str(word.encode('ascii','ignore')).translate(None,charBlacklist))
                 else:
                     for sentance in text_runs:
                         for word in set(sentance.split()):
-                            wordList.append(str(word).translate(None,charBlacklist))
+                            wordList.append(str(word.encode('ascii','ignore')).translate(None,charBlacklist))
             except Exception as e:
                 print 'Error opening file: {0}'.format(fileInput)
                 pass
