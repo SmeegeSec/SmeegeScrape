@@ -67,8 +67,12 @@ args = parser.parse_args()
 #PyPDF2 does not always work very well with extracting text from pdf.  It mainly depends on how the PDF was generated.                
 def getPDFContent(path):
     # Load PDF into PyPDF2
-    pdf = PyPDF2.PdfFileReader(file(path, "rb"))
-
+    try:
+	    pdf = PyPDF2.PdfFileReader(file(path, "rb"))
+    except:
+    	print 'Error reading: ' + path + '. Skipping.'
+    	return
+    	
     if pdf.isEncrypted:
         print 'pdf ' + path + ' is encrypted, trying blank password...'
         pdf.decrypt('') #If you want to provide your own password for an encrypted pdf, modify code here.
